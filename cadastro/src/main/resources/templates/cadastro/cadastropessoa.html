@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro de Pessoa</title>
+</head>
+<body>
+	<h1>Cadastro de Pessoa</h1>
+
+	<form action="salvarpessoa" method="post">
+
+		<label>Nome</label> <input name="nome"> <label>Sobrenome</label>
+		<input name="sobrenome"> <label>Idade</label> <input
+			name="idade"> <input type="submit" value="salvar">
+
+	</form>
+
+	<table>
+		<tr th:each="pessoa :${pessoas}">
+			<td th:text="${pessoa.id}"></td>
+			<td th:text="${pessoa.nome}"></td>
+			<td th:text="${pessoa.sobrenome}"></td>
+			<td th:text="${pessoa.idade}"></td>
+		</tr>
+	</table>
+
+
+
+</body>
+</html>
