@@ -1,9 +1,15 @@
 package com.br.cadastro.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,9 +46,33 @@ public class PessoaController {
 	
 	// O ** antes da requisição serve para ignorar na url. Por exemplo, quando for editar vai 
 	// bagunçar a URL e o ** faz com que seja interceptado o get salvarpessoa.
+	// BindingResult é a mensagem que deve ser enviada (configurada na classe modelo e enviada para a tela).
 	
 	@RequestMapping(method=RequestMethod.POST, value="**/salvarpessoa")   
-	public ModelAndView salvar(Pessoa pessoa) {
+	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
+		
+		
+		// Como estamos utilizando validações fazemos o uso do if:
+		
+		if(bindingResult.hasErrors()) {
+			ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+			Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
+			modelAndView.addObject("pessoas", pessoasIterable);
+			modelAndView.addObject("pessoaobj", pessoa); // devolve pra tela os dados que foram preenchidos (com msg de erros)
+			
+			// faz um for para encontrar os erros e apresentar na tela:
+			List<String> msg = new ArrayList<String>(); // lista com os erros em vazio
+			
+			// ObjectError é uma lista do 
+			for(ObjectError objectError : bindingResult.getAllErrors()) {
+				msg.add(objectError.getDefaultMessage()); // getDafaultMessage vem das notações feitas na classe Model.
+			}
+			
+			modelAndView.addObject("msg", msg); // joga as mensagens devolta na tela referentes aos erros encontrados.
+			return modelAndView; // returna para a tela e não executa a debaixo.
+		}
+		
+		// caso não houver erros segue o fluxo:
 		
 		pessoaRepository.save(pessoa);
 		
@@ -50,6 +80,9 @@ public class PessoaController {
 		Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
 		modelAndView.addObject("pessoas", pessoasIterable);
 		modelAndView.addObject("pessoaobj", new Pessoa()); // insere um novo objeto vazio
+		
+		String msg = "Usuário cadastrado com sucesso!"; // mensagem de sucesso 
+		modelAndView.addObject("msg", msg); // insere um novo objeto vazio
 		return modelAndView;
 		
 
@@ -110,6 +143,22 @@ public class PessoaController {
 		modelAndView.addObject("pessoas", pessoasIterable);
 		modelAndView.addObject("pessoaobj", new Pessoa());
 		
+		return modelAndView;
+		
+	}
+	
+	
+	
+	@GetMapping("/removertelefone/{idtelefone}")
+	public ModelAndView removertelefone(@PathVariable("idtelefone") Long idtelefone) {
+		
+		Pessoa pessoa = telefoneRepository.findById(idtelefone).get().getPessoa(); // atribui a um objeto pessoa os dados com base no idtelefone
+		
+		telefoneRepository.deleteById(idtelefone); // apaga o telefone com base no id informado
+		 
+		ModelAndView modelAndView = new ModelAndView("cadastro/telefones"); // retorna para a mesma tela.
+		modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoa.getId())); // seleciona os telefones com base nos valores do id de usuário.
+		modelAndView.addObject("pessoaobj", pessoa); // joga o objeto usuário na tela.
 		return modelAndView;
 		
 	}
