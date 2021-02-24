@@ -1,20 +1,61 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec=https://www.thymeleaf.org/thymeleaf-extras-springsecurity5>
+
 <head>
 <meta charset="UTF-8">
+<!--Import Google Icon Font-->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+<!-- Compiled and minified JavaScript -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<!-- Adicionando JQuery -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	crossorigin="anonymous">
+	
+</script>
+
+<!-- Adicionar um  datepicker para adicionar ao campo data -->
+
+
+
+<style type="text/css">
+table.striped>tbody>tr:nth-child(odd) {
+	background-color: rgba(158, 154, 154, 0.5);
+}
+</style>
 <title>Cadastro de Pessoa</title>
 </head>
 <body>
 	<h1>Cadastro de Pessoa</h1>
 
-	<form action="salvarpessoa" method="post">
+	<form action="salvarpessoa" method="post" th:object="${pessoaobj}">
 
-		<label>Nome</label> <input name="nome"> <label>Sobrenome</label>
-		<input name="sobrenome"> <label>Idade</label> <input
-			name="idade"> <input type="submit" value="salvar">
+		<label>ID</label><input name="id" th:field="*{id}" readonly id="id">
+		<label>Nome</label> <input name="nome" th:field="*{nome}"> 
+		<label>Sobrenome</label><input name="sobrenome" th:field="*{sobrenome}"> 
+		<label>Idade</label> <input	name="idade" th:field="*{idade}">
+			
+		<button class="btn waves-effect waves-light" type="submit" name="action">Salvar<i class="material-icons right">send</i>
+		</button>
+
+
+
 
 	</form>
+
+	<!-- esse link é um get que carrega a lista de pessoas, ou seja chama o ModelAndView que foi feito. -->
+	<a href="/listapessoas"><i class="material-icons ">expand_more</i></a>
+
 
 	<table>
 		<tr th:each="pessoa :${pessoas}">
@@ -22,6 +63,9 @@
 			<td th:text="${pessoa.nome}"></td>
 			<td th:text="${pessoa.sobrenome}"></td>
 			<td th:text="${pessoa.idade}"></td>
+			<td><a th:href="@{/editarpessoa/{idpessoa}(idpessoa=${pessoa.id})}">
+				<i class="material-icons">edit</i></a>
+			</td>
 		</tr>
 	</table>
 
