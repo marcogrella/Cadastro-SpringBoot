@@ -51,6 +51,7 @@ public class PessoaController {
 	@RequestMapping(method=RequestMethod.POST, value="**/salvarpessoa")   
 	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
 		
+		System.out.println(pessoa.getId());
 		
 		// Como estamos utilizando validações fazemos o uso do if:
 		
@@ -179,6 +180,22 @@ public class PessoaController {
 	public ModelAndView addFonePessoa(Telefone telefone, @PathVariable("pessoaid") Long pessoaid) {
 		
 		Pessoa pessoa = pessoaRepository.findById(pessoaid).get(); // consulta a pessoa com base no id
+		
+		// validação manual
+		if((telefone != null && telefone.getNumero() != null   
+				&& telefone.getNumero().isEmpty()) || telefone.getNumero() == null) {
+			
+			ModelAndView modelAndView = new ModelAndView("cadastro/telefones"); // retorna para a mesma tela.
+			modelAndView.addObject("pessoaobj", pessoa); 
+			modelAndView.addObject("telefones", telefoneRepository.getTelefones(pessoaid));
+			
+			// cria uma lista em vazio que será adicionado na tela (variável msg)
+			List<String> msg = new ArrayList<String>();
+			msg.add("O número deve ser informado");
+			modelAndView.addObject("msg", msg);
+			return modelAndView;
+		}
+		
 		telefone.setPessoa(pessoa); // seta o telefone com base nos dados da pessoa (
 		telefoneRepository.save(telefone); // salva o telefone para o repositório
 		ModelAndView modelAndView = new ModelAndView("cadastro/telefones"); // retorna para a mesma tela.

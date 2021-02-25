@@ -1,6 +1,7 @@
 package com.br.cadastro.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
 
 @Entity
 public class Pessoa implements Serializable {
@@ -31,11 +33,11 @@ public class Pessoa implements Serializable {
 	private String sobrenome;
 	
 	@NotNull(message="O campo idade não pode ser nulo.")
-	@Min(value = 10, message= "Idade inválida. Não pode ser menor que 14 anos.") 
+	@Min(value = 10, message= "Idade inválida. Não pode ser menor que 10 anos.") 
 	private int idade;
 	
 	@OneToMany(mappedBy = "pessoa", orphanRemoval = true, cascade = CascadeType.ALL)
-	private List<Telefone> telefones;
+	private List<Telefone> telefones = new ArrayList<Telefone>();;
 	
 	
 	public void setTelefones(List<Telefone> telefones) {

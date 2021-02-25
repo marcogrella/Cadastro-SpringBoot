@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
@@ -16,6 +17,13 @@ public class CadastroApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CadastroApplication.class, args);
+		
+		/* Utilizado somente para gerar uma senha criptografada.
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		String resultado = encoder.encode("admin");
+		System.out.println(resultado);
+		*/
+		
 	}
 
 }

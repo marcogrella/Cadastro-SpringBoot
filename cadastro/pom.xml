@@ -53,6 +53,22 @@
 			<version>6.1.0.Final</version>
 		</dependency>
 		
+		<!-- dependências para o uso na parte de segurança -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+			</dependency>
+		
+		
 	</dependencies>
 
 	<build>
