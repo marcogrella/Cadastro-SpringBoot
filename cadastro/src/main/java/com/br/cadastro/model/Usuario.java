@@ -1,11 +1,17 @@
 package com.br.cadastro.model;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+
+import javax.persistence.OneToMany;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,11 +28,24 @@ public class Usuario implements UserDetails {
 	private String login;
 
 	private String senha;
+	
+	// Essa é a tabela criada no banco para gerar uma regra para um usuário
+	// neste caso alteramos a constraint utilizando o sql: 
+			// ALTER TABLE public.usuarios_role
+	  		//ADD CONSTRAINT uk_krvk2qx218dxa3ogdyplk0wxw UNIQUE(role_id, usuario_id);
+	// Com isso uma regra não se repete para o mesmo usuário. 
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "usuarios_role", 
+		joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id", table ="usuario"),
+		inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", table = "role"))
+	private List<Role> roles;
+	
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 
-		return null;
+		return roles;
 	}
 
 	@Override

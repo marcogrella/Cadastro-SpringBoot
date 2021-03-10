@@ -52,7 +52,7 @@ table.striped>tbody>tr:nth-child(odd) {
 			<form action="salvarpessoa" method="post" th:object="${pessoaobj}"
 				class="col s8" id="formpessoa" enctype="multipart/form-data">
 
-				<div class="row">
+				<div class="row" sec:authorize="hasRole('ROLE_ADMIN')">
 					<div class="input-field col s4">
 						<label for="id" class="active">ID:</label>
 						<br/><input name="id" th:field="*{id}" readonly id="id">
@@ -64,13 +64,13 @@ table.striped>tbody>tr:nth-child(odd) {
 					</div>
 				</div>
 				
-				<div class="row">
+				<div class="row" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CAIXA')">
 					<div class="input-field col s4">
 						<label for="sobrenome" class="active">Sobrenome:</label><br /> <input
 							name="sobrenome" th:field="*{sobrenome}" id="sobrenome"
 							class="validate">
 					</div>
-					<div class="input-field col s4">
+					<div class="input-field col s4" >
 						<label for="idade" class="active">Idade:</label><br /> <input
 							name="idade" th:field="*{idade}" id="idade" class="validate">
 					</div>
