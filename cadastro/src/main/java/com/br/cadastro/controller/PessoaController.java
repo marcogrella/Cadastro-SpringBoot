@@ -51,8 +51,9 @@ public class PessoaController {
 	@RequestMapping(method=RequestMethod.POST, value="**/salvarpessoa")   
 	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
 		
-		System.out.println(pessoa.getId());
-		
+		pessoa.setTelefones(telefoneRepository.getTelefones(pessoa.getId()));
+		//System.out.println(pessoa.getId());
+		 
 		// Como estamos utilizando validações fazemos o uso do if:
 		
 		if(bindingResult.hasErrors()) {
@@ -165,10 +166,21 @@ public class PessoaController {
 	}
 	
 	@PostMapping("**/pesquisarpessoa")
-	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa) {
+	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesquisasexo") String pesquisasexo) {
+		
+		List<Pessoa> pessoas = new ArrayList<Pessoa>();
+		
+		
+		if(pesquisasexo!=null && !pesquisasexo.isEmpty()) {
+			pessoas = pessoaRepository.findPessoaByNameAndSex(nomepesquisa, pesquisasexo);
+		} else {
+			pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
+		}
+		
+		
 		
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		modelAndView.addObject("pessoas", pessoaRepository.findPessoaByName(nomepesquisa));
+		modelAndView.addObject("pessoas", pessoas);
 		modelAndView.addObject("pessoaobj", new Pessoa());
 		return modelAndView;
 		

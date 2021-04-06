@@ -29,6 +29,10 @@ public class Usuario implements UserDetails {
 
 	private String senha;
 	
+	
+	
+	
+	
 	// Essa é a tabela criada no banco para gerar uma regra para um usuário
 	// neste caso alteramos a constraint utilizando o sql: 
 			// ALTER TABLE public.usuarios_role
@@ -106,4 +110,10 @@ public class Usuario implements UserDetails {
 		this.senha = senha;
 	}
 
+	
+
+	
+	
+	
+	
 }

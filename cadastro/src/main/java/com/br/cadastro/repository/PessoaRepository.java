@@ -18,5 +18,9 @@ public interface PessoaRepository extends CrudRepository <Pessoa, Long> {
 	// note que o parâmetro pode ria ser 1 ou mais ficando com and mais outro parâmetro
 	@Query("select p from Pessoa p where lower(p.nome) like lower(concat('%', ?1,'%'))")
 	List<Pessoa> findPessoaByName(String nome);
+	
+	@Query("select p from Pessoa p where lower(p.nome) like lower(concat('%', ?1,'%')) and p.sexo = ?2" )
+	List<Pessoa> findPessoaByNameAndSex(String nome, String sexo);
+	
 
 }

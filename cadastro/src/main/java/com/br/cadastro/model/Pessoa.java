@@ -14,41 +14,51 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-
 @Entity
 public class Pessoa implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
-	@NotNull(message="O campo nome não pode ser nulo.")
+
+	@NotNull(message = "O campo nome não pode ser nulo.")
 	@NotEmpty(message = "O campo nome deve ser preenchido.")
 	private String nome;
-	
-	@NotNull(message="O campo sobrenome não pode ser nulo.")
+
+	@NotNull(message = "O campo sobrenome não pode ser nulo.")
 	@NotEmpty(message = "O campo sobrenome deve ser preenchido.")
 	private String sobrenome;
-	
-	@NotNull(message="O campo idade não pode ser nulo.")
-	@Min(value = 10, message= "Idade inválida. Não pode ser menor que 10 anos.") 
+
+	@NotNull(message = "O campo idade não pode ser nulo.")
+	@Min(value = 10, message = "Idade inválida. Não pode ser menor que 10 anos.")
 	private int idade;
-	
+
 	@OneToMany(mappedBy = "pessoa", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Telefone> telefones = new ArrayList<Telefone>();;
+
+	private String cep;
+
+	private String rua;
+
+	private String bairro;
+
+	private String cidade;
+
+	private String uf;
 	
+	private String sexo;
 	
+
 	public void setTelefones(List<Telefone> telefones) {
 		this.telefones = telefones;
 	}
-	
+
 	public List<Telefone> getTelefones() {
 		return telefones;
 	}
-	
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -72,7 +82,6 @@ public class Pessoa implements Serializable {
 	public void setSobrenome(String sobrenome) {
 		this.sobrenome = sobrenome;
 	}
-	
 
 	public int getIdade() {
 		return idade;
@@ -81,8 +90,55 @@ public class Pessoa implements Serializable {
 	public void setIdade(int idade) {
 		this.idade = idade;
 	}
-	
-	
-	
 
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	public String getRua() {
+		return rua;
+	}
+
+	public void setRua(String rua) {
+		this.rua = rua;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
+
+	public String getUf() {
+		return uf;
+	}
+
+	public void setUf(String uf) {
+		this.uf = uf;
+	}
+
+	public String getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+	
+	
+	
 }
