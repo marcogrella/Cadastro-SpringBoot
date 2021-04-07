@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class PessoaController {
 	
 	@Autowired
 	private TelefoneRepository telefoneRepository;
+	
+	@Autowired
+	private ReportUtil reportUtil; 
 	
 	@RequestMapping(method=RequestMethod.GET, value="/cadastropessoa")
 	public ModelAndView inicio() {
@@ -185,6 +190,56 @@ public class PessoaController {
 		return modelAndView;
 		
 	}
+	
+	// Utilizado para fazer relatório dos usuários. É o mesmo mapeamento que o decima (pesquisar pessoa). Só que está alterado 
+	// para que quando seja clicado ao invez de enviar um post fará o envio de um get (alterado por intermédio de um javascript)
+	// Esse método não recarrega a página, pra não perder o valor que está setado na lista da tela.
+	@GetMapping("**/pesquisarpessoa")
+	public void imprimePDF(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesquisasexo") String pesquisasexo,
+			HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		List<Pessoa> pessoas = new ArrayList<Pessoa>();
+		
+		// se tiver nome e sexo
+		if (pesquisasexo!=null && !pesquisasexo.isEmpty() && nomepesquisa!=null && !nomepesquisa.isEmpty()) {
+			pessoas = pessoaRepository.findPessoaByNameAndSex(nomepesquisa, pesquisasexo);
+		// se tiver somente o nome
+		} else if(nomepesquisa!=null && nomepesquisa.isEmpty()) {
+			pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
+			
+		}
+		// se ambos os campos estiverem vazios (busca todos)
+		else {
+			Iterable<Pessoa> listaIterator = pessoaRepository.findAll();
+				for (Pessoa pessoa : listaIterator) {
+					pessoas.add(pessoa);
+				}
+		}
+		
+		
+		
+		// fazer o relatório utilizando o reportUtil
+		
+		byte[] pdf = reportUtil.gerarRelatorio(pessoas, "pessoa", request.getServletContext());
+		
+		// tamanho da resposta para o navegador
+		response.setContentLength(pdf.length);
+		
+		// define para a resposta o tipo de arquivo.
+		response.setContentType("application/octet-stream");
+		
+		// define o cabeçalho da resposta:
+		String headerKey = "Content-Disposition";
+		String headerValue = String.format("attachment; filename=\"%s\"", "relatorio.pdf");
+		response.setHeader(headerKey, headerValue);
+		
+		// finalizar a resposta para o navegador:
+		response.getOutputStream().write(pdf);
+		
+		
+	}
+	
+	
 	
 	
 	// Método para adicionar Telefone:

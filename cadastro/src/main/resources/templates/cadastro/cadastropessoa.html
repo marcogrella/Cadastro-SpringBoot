@@ -103,21 +103,28 @@ table.striped>tbody>tr:nth-child(odd) {
 
 				<div class="row">
 					<div class="input-field col s4">
-						<label for="uf" class="active">UF:</label><br /> <input name="uf"
-							th:field="*{uf}" id="uf" class="validate">
+						<label for="uf" class="active">UF:</label><br /> <input
+							name="uf" th:field="*{uf}" id="uf" class="validate">
 					</div>
-
 					<div class="input-field col s4">
-						<label for="sexo" class="active">Sexo:</label><br /> 
-						<select	class="browser-default" th:field="*{sexo}">
-							<option value="" disabled selected>Selecione o sexo</option>
-							<option value="MASCULINO" th:text="Masculino" />
-							<option value="FEMININO" th:text="Feminino" />
-						</select>
+						<label for="ibge" class="active">IBGE:</label><br /> <input
+							name="ibge" th:field="*{ibge}" id="ibge" class="validate">
 					</div>
 				</div>
+			
+			<div class="row">		
+				<div class="input-field col s4">
+					<label for="sexo" class="active">Sexo:</label><br /> 
+					<select	class="browser-default" th:field="*{sexo}">
+						<option value="" disabled selected>Selecione o sexo</option>
+						<option value="MASCULINO" th:text="Masculino" />
+						<option value="FEMININO" th:text="Feminino" />
+					</select>
+				</div>
+			</div>	
 
-
+			<div class="row">
+				<div class="input-field col s4">
 				<button class="btn waves-effect waves-light" type="submit"
 					name="action">
 					Salvar<i class="material-icons right">send</i>
@@ -126,7 +133,8 @@ table.striped>tbody>tr:nth-child(odd) {
 					class="btn waves-effect waves-light">
 					Reset<i class="material-icons right">autorenew</i>
 				</button>
-
+				</div>
+			</div>
 			</form>
 		</div>
 	</fieldset>
@@ -140,18 +148,17 @@ table.striped>tbody>tr:nth-child(odd) {
 		<div class="row">
 			<form action="pesquisarpessoa" method="post" class="col s8"
 				id="pesquisarpessoa">
-				<div class="input-field col s4">
+				<div class="input-field col s6">
 					<label for="nomepesquisa" class="active">Pesquisar por
-						Nome:</label><br /> <input name="nomepesquisa" id="nomepesquisa"
-						class="validate">
-						
+						Nome:</label><br /> <input name="nomepesquisa" id="nomepesquisa"class="validate">
 					<button class="btn waves-effect waves-light" type="submit" name="action">
 						Buscar<i class="material-icons right ">find_in_page</i>
 					</button>
 					<a class="waves-effetc waves-light btn" href="/listapessoas">Listar
-						Pessoas</a>
-						
-						
+						Pessoas</a>	
+					<button class="btn waves-effect waves-light" type="submit" name="action" onclick="document.getElementById('pesquisarpessoa').method = 'get'">
+						PDF<i class="material-icons right ">library_books</i>
+					</button>
 				</div>
 				
 				<div class="input-field col s4">
@@ -215,6 +222,7 @@ table.striped>tbody>tr:nth-child(odd) {
 								$("#bairro").val("");
 								$("#cidade").val("");
 								$("#uf").val("");
+								$("#ibge").val("");
 
 							}
 
@@ -241,6 +249,7 @@ table.striped>tbody>tr:nth-child(odd) {
 														$("#bairro").val("...");
 														$("#cidade").val("...");
 														$("#uf").val("...");
+														$("#ibge").val("...");
 
 														//Consulta o webservice viacep.com.br/
 														$
@@ -269,6 +278,10 @@ table.striped>tbody>tr:nth-child(odd) {
 																						"#uf")
 																						.val(
 																								dados.uf);
+																				$(
+																						"#ibge")
+																				.val(
+																						dados.ibge);
 
 																			} //end if.
 																			else {

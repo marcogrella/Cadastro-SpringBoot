@@ -50,6 +50,8 @@ public class Pessoa implements Serializable {
 	
 	private String sexo;
 	
+	private String ibge;
+	
 
 	public void setTelefones(List<Telefone> telefones) {
 		this.telefones = telefones;
@@ -138,6 +140,15 @@ public class Pessoa implements Serializable {
 	public void setSexo(String sexo) {
 		this.sexo = sexo;
 	}
+
+	public String getIbge() {
+		return ibge;
+	}
+
+	public void setIbge(String ibge) {
+		this.ibge = ibge;
+	}
+	
 	
 	
 	
