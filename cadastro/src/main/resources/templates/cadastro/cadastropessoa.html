@@ -17,12 +17,19 @@
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
+
+
+
 <!-- Adicionando JQuery -->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"
 	integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
 	crossorigin="anonymous">
 	
 </script>
+
+
+<script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+<link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 
 <!-- Adicionar um  datepicker para adicionar ao campo data -->
 
@@ -61,6 +68,11 @@ table.striped>tbody>tr:nth-child(odd) {
 						<label for="nome" class="active">Nome:</label> <br />
 						<input name="nome" th:field="*{nome}" id="nome" class="validate"
 							placeholder="Informe o nome">
+					</div>
+					
+					<div class="input-field col s4">
+						<label for="dataNascimento" class="active">Data Nascimento:</label> <br />
+						<input type="date" th:field="*{dataNascimento}" id="dataNascimento" name="dataNascimento">
 					</div>
 				</div>
 
@@ -126,6 +138,13 @@ table.striped>tbody>tr:nth-child(odd) {
 					<label for="profissao" class="active">Profissão:</label><br/> 
 					<select	class="browser-default" th:field="*{profissao}" id="profissao"> 
 						<option th:each = "p : ${profissoes}" th:value="${p.id}" th:text="${p.nome}">	
+					</select>
+				</div>
+				
+				<div class="input-field col s4">	
+					<label for="cargo" class="active">Cargo:</label><br/> 
+					<select	class="browser-default" th:field="*{cargo}" id="cargo"> 
+						<option th:each = "c : ${T(com.br.cadastro.model.Cargo).values()}" th:value="${c.valor}" th:text="${c.nome}">	
 					</select>
 				</div>
 			
@@ -232,6 +251,11 @@ table.striped>tbody>tr:nth-child(odd) {
 		$(document)
 				.ready(
 						function() {
+							
+							$('#dataNascimento').datepicker({
+								showOthermonths:true,
+								format: 'yyyy-mm-dd'
+							});
 
 							function limpa_formulário_cep() {
 								// Limpa valores do formulário de cep.
