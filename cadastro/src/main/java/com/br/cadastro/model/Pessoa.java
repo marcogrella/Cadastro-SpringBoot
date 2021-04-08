@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -51,6 +52,10 @@ public class Pessoa implements Serializable {
 	private String sexo;
 	
 	private String ibge;
+	
+	// muitas pessoas para essa profissão
+	@ManyToOne
+	private Profissao profissao;
 	
 
 	public void setTelefones(List<Telefone> telefones) {
@@ -147,6 +152,14 @@ public class Pessoa implements Serializable {
 
 	public void setIbge(String ibge) {
 		this.ibge = ibge;
+	}
+
+	public Profissao getProfissao() {
+		return profissao;
+	}
+
+	public void setProfissao(Profissao profissao) {
+		this.profissao = profissao;
 	}
 	
 	

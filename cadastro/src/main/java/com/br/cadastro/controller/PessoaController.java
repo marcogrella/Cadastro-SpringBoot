@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.br.cadastro.model.Pessoa;
+import com.br.cadastro.model.Profissao;
 import com.br.cadastro.model.Telefone;
 import com.br.cadastro.repository.PessoaRepository;
+import com.br.cadastro.repository.ProfissaoRepository;
 import com.br.cadastro.repository.TelefoneRepository;
 
 @Controller
@@ -37,6 +39,9 @@ public class PessoaController {
 	@Autowired
 	private ReportUtil reportUtil; 
 	
+	@Autowired
+	private ProfissaoRepository profissaoRepository;
+	
 	@RequestMapping(method=RequestMethod.GET, value="/cadastropessoa")
 	public ModelAndView inicio() {
 		
@@ -45,6 +50,8 @@ public class PessoaController {
 		Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
 		modelAndView.addObject("pessoas", pessoasIterable);
 		modelAndView.addObject("pessoaobj", new Pessoa()); // insere um novo objeto vazio
+		modelAndView.addObject("profissoes", profissaoRepository.findAll());
+		
 		return modelAndView;
 		
 	}
@@ -76,6 +83,7 @@ public class PessoaController {
 			}
 			
 			modelAndView.addObject("msg", msg); // joga as mensagens devolta na tela referentes aos erros encontrados.
+			modelAndView.addObject("profissoes", profissaoRepository.findAll());
 			return modelAndView; // returna para a tela e não executa a debaixo.
 		}
 		
@@ -90,6 +98,7 @@ public class PessoaController {
 		
 		String msg = "Usuário cadastrado com sucesso!"; // mensagem de sucesso 
 		modelAndView.addObject("msg", msg); // insere um novo objeto vazio
+		modelAndView.addObject("profissoes", profissaoRepository.findAll());
 		return modelAndView;
 		
 
@@ -122,7 +131,7 @@ public class PessoaController {
 		Optional<Pessoa> pessoa = pessoaRepository.findById(idpessoa);
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		modelAndView.addObject("pessoaobj", pessoa.get());
-		
+		modelAndView.addObject("profissoes", profissaoRepository.findAll());
 		return modelAndView;
 		
 	}
@@ -175,6 +184,8 @@ public class PessoaController {
 		
 		List<Pessoa> pessoas = new ArrayList<Pessoa>();
 		
+		System.out.println("Entrei no Post: " + nomepesquisa);
+		System.out.println("Entrei no Post: " + pesquisasexo);
 		
 		if(pesquisasexo!=null && !pesquisasexo.isEmpty()) {
 			pessoas = pessoaRepository.findPessoaByNameAndSex(nomepesquisa, pesquisasexo);
@@ -198,24 +209,40 @@ public class PessoaController {
 	public void imprimePDF(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesquisasexo") String pesquisasexo,
 			HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
+		
+		System.out.println("Entre no Get");
+		System.out.println(nomepesquisa);
+		System.out.println(pesquisasexo);
 		List<Pessoa> pessoas = new ArrayList<Pessoa>();
 		
-		// se tiver nome e sexo
-		if (pesquisasexo!=null && !pesquisasexo.isEmpty() && nomepesquisa!=null && !nomepesquisa.isEmpty()) {
+		if(pesquisasexo!=null && !pesquisasexo.isEmpty() && nomepesquisa!=null && !nomepesquisa.isEmpty()) {
+			System.out.println("Sexo e nome enviados Enviado");
+			System.out.println("Chamei método nome Name and Sex");
 			pessoas = pessoaRepository.findPessoaByNameAndSex(nomepesquisa, pesquisasexo);
-		// se tiver somente o nome
-		} else if(nomepesquisa!=null && nomepesquisa.isEmpty()) {
+		
+			// verifico se tem nome
+		} else if(nomepesquisa!=null && !nomepesquisa.isEmpty()) {
+			System.out.println("Só tem nome");
+			System.out.println("Chamei método findByName");
 			pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
 			
-		}
-		// se ambos os campos estiverem vazios (busca todos)
-		else {
-			Iterable<Pessoa> listaIterator = pessoaRepository.findAll();
-				for (Pessoa pessoa : listaIterator) {
-					pessoas.add(pessoa);
-				}
+			// verifico se tem sexo
+		} else if(pesquisasexo!=null && !pesquisasexo.isEmpty()) {
+			System.out.println("Só tem sexo");
+			System.out.println("Chamei método findBySex");
+			pessoas = pessoaRepository.findPessoaBySex(pesquisasexo);
 		}
 		
+		// não tem nome nem sexo
+		else {
+			System.out.println("Não tem nem nome nem sexo: ");
+			System.out.println("Chamo o método findAll()");
+			Iterable<Pessoa> listaIterator = pessoaRepository.findAll();
+			for (Pessoa pessoa : listaIterator) {
+				pessoas.add(pessoa);
+		}
+			
+		}
 		
 		
 		// fazer o relatório utilizando o reportUtil

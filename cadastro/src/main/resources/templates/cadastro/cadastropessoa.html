@@ -121,6 +121,15 @@ table.striped>tbody>tr:nth-child(odd) {
 						<option value="FEMININO" th:text="Feminino" />
 					</select>
 				</div>
+				
+				<div class="input-field col s4">
+					<label for="profissao" class="active">Profissão:</label><br/> 
+					<select	class="browser-default" th:field="*{profissao}" id="profissao"> 
+						<option th:each = "p : ${profissoes}" th:value="${p.id}" th:text="${p.nome}">	
+					</select>
+				</div>
+			
+				
 			</div>	
 
 			<div class="row">
@@ -148,18 +157,26 @@ table.striped>tbody>tr:nth-child(odd) {
 		<div class="row">
 			<form action="pesquisarpessoa" method="post" class="col s8"
 				id="pesquisarpessoa">
-				<div class="input-field col s6">
+				<div class="input-field col s5">
 					<label for="nomepesquisa" class="active">Pesquisar por
-						Nome:</label><br /> <input name="nomepesquisa" id="nomepesquisa"class="validate">
-					<button class="btn waves-effect waves-light" type="submit" name="action">
-						Buscar<i class="material-icons right ">find_in_page</i>
-					</button>
-					<a class="waves-effetc waves-light btn" href="/listapessoas">Listar
-						Pessoas</a>	
-					<button class="btn waves-effect waves-light" type="submit" name="action" onclick="document.getElementById('pesquisarpessoa').method = 'get'">
+						Nome:</label><br /><input name="nomepesquisa" id="nomepesquisa"class="validate">
+					
+					<button class="btn waves-effect waves-light" type="submit" onclick="document.getElementById('pesquisarpessoa').method = 'get'">
 						PDF<i class="material-icons right ">library_books</i>
 					</button>
+					
+					<button class="btn waves-effect waves-light" type="submit">
+						Buscar<i class="material-icons right ">find_in_page</i>
+					</button>
+				
+					<a class="waves-effetc waves-light btn" href="/listapessoas">Listar Todos</a>
+					
 				</div>
+				
+				
+			
+				
+				
 				
 				<div class="input-field col s4">
 					<label for="nomepesquisa" class="active">Pesquisar por
