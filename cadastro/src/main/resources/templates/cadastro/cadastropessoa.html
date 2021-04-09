@@ -241,6 +241,7 @@ table th{
 	<fieldset>
 		<legend style="font-weight: bold">Lista de Usuários</legend>
 		<table border=1 class="striped">
+			
 			<tr>
 				<th>ID</th>
 				<th>Nome</th>
@@ -258,12 +259,14 @@ table th{
 						th:text="${pessoa.nome}"></span></a></td>
 				<td th:text="${pessoa.sobrenome}"></td>			
 				
+				
 				<td>
 					<a th:if="${pessoa.curriculo != null}" th:href="@{/baixarcurriculo/{idpessoa}(idpessoa=${pessoa.id})}">
 						<i class="material-icons">file_download</i></a>
 					<a th:if="${pessoa.curriculo == null}"><i
 						class="material-icons" style="color: red;">close</i></a>	
 				</td>
+				
 				
 				<td><a
 					th:href="@{/editarpessoa/{idpessoa}(idpessoa=${pessoa.id})}"> <i
@@ -272,6 +275,7 @@ table th{
 					th:href="@{/removerpessoa/{idpessoa}(idpessoa=${pessoa.id})}">
 						<i class="material-icons">delete</i>
 				</a></td>
+
 
 			</tr>
 		</table>

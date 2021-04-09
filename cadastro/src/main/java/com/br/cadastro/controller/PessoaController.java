@@ -195,8 +195,11 @@ public class PessoaController {
 	public ModelAndView remover(@PathVariable("idpessoa") Long idpessoa) {
 		
 		pessoaRepository.deleteById(idpessoa);
+		
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
+		
 		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
+		
 		modelAndView.addObject("pessoaobj", new Pessoa());
 		
 		return modelAndView;
