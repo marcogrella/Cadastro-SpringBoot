@@ -39,7 +39,27 @@
 table.striped>tbody>tr:nth-child(odd) {
 	background-color: rgba(158, 154, 154, 0.5);
 }
+
+form input[type=submit]{
+	color: white; 
+}
+
+table {
+	width: 100%;
+}
+
+table td, table th{
+	border: 1px solid grey;
+}
+
+table th{
+	background: #eeee; 
+}
+
 </style>
+
+
+
 <title>Cadastro de Pessoa</title>
 </head>
 <body>
@@ -47,7 +67,7 @@ table.striped>tbody>tr:nth-child(odd) {
 
 
 	<fieldset>
-		<legend>Cadastro de Usuários</legend>
+		<legend style="font-weight: bold">Cadastro de Usuários</legend>
 		<div class="row">
 
 			<br />
@@ -58,20 +78,19 @@ table.striped>tbody>tr:nth-child(odd) {
 
 			<form action="salvarpessoa" method="post" th:object="${pessoaobj}"
 				class="col s8" id="formpessoa" enctype="multipart/form-data">
-
 				<div class="row" sec:authorize="hasRole('ROLE_ADMIN')">
 					<div class="input-field col s4">
-						<label for="id" class="active">ID:</label> <br />
+						<label for="id" class="active" style="font-weight: bold">ID:</label> <br />
 						<input name="id" th:field="*{id}" readonly id="id">
 					</div>
 					<div class="input-field col s4">
-						<label for="nome" class="active">Nome:</label> <br />
+						<label for="nome" class="active" style="font-weight: bold">Nome:</label> <br />
 						<input name="nome" th:field="*{nome}" id="nome" class="validate"
 							placeholder="Informe o nome">
 					</div>
 					
 					<div class="input-field col s4">
-						<label for="dataNascimento" class="active">Data Nascimento:</label> <br />
+						<label for="dataNascimento" class="active" style="font-weight: bold">Data Nascimento:</label> <br />
 						<input type="date" th:field="*{dataNascimento}" id="dataNascimento" name="dataNascimento">
 					</div>
 				</div>
@@ -79,12 +98,12 @@ table.striped>tbody>tr:nth-child(odd) {
 				<div class="row"
 					sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CAIXA')">
 					<div class="input-field col s4">
-						<label for="sobrenome" class="active">Sobrenome:</label><br /> <input
+						<label for="sobrenome" class="active" style="font-weight: bold">Sobrenome:</label><br /> <input
 							name="sobrenome" th:field="*{sobrenome}" id="sobrenome"
 							class="validate">
 					</div>
 					<div class="input-field col s4">
-						<label for="idade" class="active">Idade:</label><br /> <input
+						<label for="idade" class="active" style="font-weight: bold">Idade:</label><br /> <input
 							name="idade" th:field="*{idade}" id="idade" class="validate">
 					</div>
 
@@ -92,41 +111,41 @@ table.striped>tbody>tr:nth-child(odd) {
 
 				<div class="row">
 					<div class="input-field col s4">
-						<label for="cep" class="active">Cep:</label><br /> <input
+						<label for="cep" class="active" style="font-weight: bold">Cep:</label><br /> <input
 							name="cep" th:field="*{cep}" id="cep" class="validate"
 							placeholder="informe um cep válido.">
 					</div>
 					<div class="input-field col s4">
-						<label for="rua" class="active">Rua:</label><br /> <input
+						<label for="rua" class="active" style="font-weight: bold">Rua:</label><br /> <input
 							name="rua" th:field="*{rua}" id="rua" class="validate">
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="input-field col s4">
-						<label for="bairro" class="active">Bairro:</label><br /> <input
+						<label for="bairro" class="active" style="font-weight: bold">Bairro:</label><br /> <input
 							name="bairro" th:field="*{bairro}" id="bairro" class="validate">
 					</div>
 					<div class="input-field col s4">
-						<label for="cidade" class="active">Cidade:</label><br /> <input
+						<label for="cidade" class="active" style="font-weight: bold">Cidade:</label><br /> <input
 							name="cidade" th:field="*{cidade}" id="cidade" class="validate">
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="input-field col s4">
-						<label for="uf" class="active">UF:</label><br /> <input
+						<label for="uf" class="active" style="font-weight: bold">UF:</label><br /> <input
 							name="uf" th:field="*{uf}" id="uf" class="validate">
 					</div>
 					<div class="input-field col s4">
-						<label for="ibge" class="active">IBGE:</label><br /> <input
+						<label for="ibge" class="active" style="font-weight: bold">IBGE:</label><br /> <input
 							name="ibge" th:field="*{ibge}" id="ibge" class="validate">
 					</div>
 				</div>
 			
 			<div class="row">		
 				<div class="input-field col s4">
-					<label for="sexo" class="active">Sexo:</label><br /> 
+					<label for="sexo" class="active" style="font-weight: bold">Sexo:</label><br /> 
 					<select	class="browser-default" th:field="*{sexo}">
 						<option value="" disabled selected>Selecione o sexo</option>
 						<option value="MASCULINO" th:text="Masculino" />
@@ -135,21 +154,31 @@ table.striped>tbody>tr:nth-child(odd) {
 				</div>
 				
 				<div class="input-field col s4">
-					<label for="profissao" class="active">Profissão:</label><br/> 
+					<label for="profissao" class="active" style="font-weight: bold">Profissão:</label><br/> 
 					<select	class="browser-default" th:field="*{profissao}" id="profissao"> 
 						<option th:each = "p : ${profissoes}" th:value="${p.id}" th:text="${p.nome}">	
 					</select>
 				</div>
 				
 				<div class="input-field col s4">	
-					<label for="cargo" class="active">Cargo:</label><br/> 
+					<label for="cargo" class="active" style="font-weight: bold">Cargo:</label><br/> 
 					<select	class="browser-default" th:field="*{cargo}" id="cargo"> 
 						<option th:each = "c : ${T(com.br.cadastro.model.Cargo).values()}" th:value="${c.valor}" th:text="${c.nome}">	
 					</select>
 				</div>
-			
-				
 			</div>	
+			
+			<div class="row">		
+				<div class="input-field col s4">
+					<label for="file" class="active" style="font-weight: bold">Currículo</label><br /> 
+						<input type="file" id="file" name="file" class="file-field input-field"/>			
+				</div>
+			</div>	
+			
+			
+			
+			
+			
 
 			<div class="row">
 				<div class="input-field col s4">
@@ -172,13 +201,13 @@ table.striped>tbody>tr:nth-child(odd) {
 	<!-- esse formulário é só para pessquisa por nome o parâmetro que envia é o nomepesquisa-->
 
 	<fieldset>
-		<legend>Campos de Pesquisa</legend>
+		<legend style="font-weight: bold">Campos de Pesquisa</legend>
 		<div class="row">
 			<form action="pesquisarpessoa" method="post" class="col s8"
 				id="pesquisarpessoa">
 				<div class="input-field col s5">
-					<label for="nomepesquisa" class="active">Pesquisar por
-						Nome:</label><br /><input name="nomepesquisa" id="nomepesquisa"class="validate">
+					<label for="nomepesquisa" class="active" style="font-weight: bold">Pesquisar por
+						Nome:</label><br /><input name="nomepesquisa" id="nomepesquisa"class="validate" th:value="${nomepesquisa}">
 					
 					<button class="btn waves-effect waves-light" type="submit" onclick="document.getElementById('pesquisarpessoa').method = 'get'">
 						PDF<i class="material-icons right ">library_books</i>
@@ -192,13 +221,8 @@ table.striped>tbody>tr:nth-child(odd) {
 					
 				</div>
 				
-				
-			
-				
-				
-				
 				<div class="input-field col s4">
-					<label for="nomepesquisa" class="active">Pesquisar por
+					<label for="nomepesquisa" class="active" style="font-weight: bold">Pesquisar por
 						Sexo:</label><br /> 
 						<select	class="browser-default" name="pesquisasexo" id="pesquisasexo">
 							<option value="">Todos</option>
@@ -215,25 +239,32 @@ table.striped>tbody>tr:nth-child(odd) {
 
 
 	<fieldset>
-		<legend>Lista de Usuários</legend>
+		<legend style="font-weight: bold">Lista de Usuários</legend>
 		<table border=1 class="striped">
 			<tr>
 				<th>ID</th>
 				<th>Nome</th>
 				<th>Sobrenome</th>
-				<th>Idade</th>
+				<th>Currículo</th>
 				<th>Editar</th>
 				<th>Excluir</th>
 			</tr>
 
 
-			<tr th:each="pessoa :${pessoas}">
+			<tr th:each="pessoa :${pessoas.content}">
 				<td th:text="${pessoa.id}"></td>
 				<td><a
 					th:href="@{/telefones/{idpessoa}(idpessoa=${pessoa.id})}"><span
 						th:text="${pessoa.nome}"></span></a></td>
-				<td th:text="${pessoa.sobrenome}"></td>
-				<td th:text="${pessoa.idade}"></td>
+				<td th:text="${pessoa.sobrenome}"></td>			
+				
+				<td>
+					<a th:if="${pessoa.curriculo != null}" th:href="@{/baixarcurriculo/{idpessoa}(idpessoa=${pessoa.id})}">
+						<i class="material-icons">file_download</i></a>
+					<a th:if="${pessoa.curriculo == null}"><i
+						class="material-icons" style="color: red;">close</i></a>	
+				</td>
+				
 				<td><a
 					th:href="@{/editarpessoa/{idpessoa}(idpessoa=${pessoa.id})}"> <i
 						class="material-icons">edit</i></a></td>
@@ -244,6 +275,23 @@ table.striped>tbody>tr:nth-child(odd) {
 
 			</tr>
 		</table>
+		
+		<div class="row" style="margin-top: 30px; text-align: center;" > 
+		
+				<span th:if="${pessoas.hasPrevious()}">
+					<a th:href="@{/pessoaspag(page=${pessoas.number - 1}, size=${pessoas.size}, nomepesquisa=${nomepesquisa})}">Anterior</a>
+				</span>
+			
+		
+				<th:block th:each="i: ${#numbers.sequence(0, pessoas.totalPages - 1)}">
+					<a th:href="@{/pessoaspag(page=${i}, size=${pessoas.size}, nomepesquisa=${nomepesquisa})}">[[ ${i} + 1]]</a>
+				</th:block>
+				
+				<span th:if="${pessoas.hasNext()}">
+					<a th:href="@{/pessoaspag(page=${pessoas.number + 1}, size=${pessoas.size}, nomepesquisa=${nomepesquisa})}">Próxima</a>
+				</span>
+				
+		</div>
 	</fieldset>
 
 	<!-- Adicionando Javascript -->

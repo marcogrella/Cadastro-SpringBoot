@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -71,6 +72,14 @@ public class Pessoa implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataNascimento;
 	
+	
+	// array de byte para gravar no banco. Utiliza a notação @Lob
+	@Lob
+	private byte[] curriculo;
+	
+	private String nomeFileCurriculo;
+	
+	private String tipoFileCurriculo;
 	
 	
 	public void setTelefones(List<Telefone> telefones) {
@@ -192,6 +201,32 @@ public class Pessoa implements Serializable {
 	public void setDataNascimento(Date dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
+
+	public byte[] getCurriculo() {
+		return curriculo;
+	}
+
+	public void setCurriculo(byte[] curriculo) {
+		this.curriculo = curriculo;
+	}
+
+	public String getNomeFileCurriculo() {
+		return nomeFileCurriculo;
+	}
+
+	public void setNomeFileCurriculo(String nomeFileCurriculo) {
+		this.nomeFileCurriculo = nomeFileCurriculo;
+	}
+
+	public String getTipoFileCurriculo() {
+		return tipoFileCurriculo;
+	}
+
+	public void setTipoFileCurriculo(String tipoFileCurriculo) {
+		this.tipoFileCurriculo = tipoFileCurriculo;
+	}
+	
+	
 	
 	
 	

@@ -1,5 +1,6 @@
 package com.br.cadastro.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -18,10 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.br.cadastro.model.Pessoa;
-import com.br.cadastro.model.Profissao;
 import com.br.cadastro.model.Telefone;
 import com.br.cadastro.repository.PessoaRepository;
 import com.br.cadastro.repository.ProfissaoRepository;
@@ -47,8 +52,7 @@ public class PessoaController {
 		
 		// quando iniciar a tela tem que passar um objeto vazio se não vai dar erro. 
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
-		modelAndView.addObject("pessoas", pessoasIterable);
+		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
 		modelAndView.addObject("pessoaobj", new Pessoa()); // insere um novo objeto vazio
 		modelAndView.addObject("profissoes", profissaoRepository.findAll());
 		
@@ -56,12 +60,31 @@ public class PessoaController {
 		
 	}
 	
+	
+	// criado com o intuito de realizar a paginação. Quando requisitar a paginação por parte do thymeleaf
+	@GetMapping("/pessoaspag")
+	public ModelAndView carregaPessoasPorPaginacao(@PageableDefault(size = 5) Pageable pageable, ModelAndView modelAndView, @RequestParam ("nomepesquisa") String nomepesquisa) {
+		
+		Page<Pessoa> pagePessoa = pessoaRepository.findPessoaByNamePage(nomepesquisa, pageable);
+		
+		modelAndView.addObject("pessoaobj", new Pessoa());
+		modelAndView.addObject("pessoas", pagePessoa);
+		modelAndView.addObject("nomepesquisa", nomepesquisa);
+		modelAndView.setViewName("cadastro/cadastropessoa");
+		
+		return modelAndView;
+		
+		
+	}
+	
+	
+	
 	// O ** antes da requisição serve para ignorar na url. Por exemplo, quando for editar vai 
 	// bagunçar a URL e o ** faz com que seja interceptado o get salvarpessoa.
 	// BindingResult é a mensagem que deve ser enviada (configurada na classe modelo e enviada para a tela).
 	
-	@RequestMapping(method=RequestMethod.POST, value="**/salvarpessoa")   
-	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult) {
+	@RequestMapping(method=RequestMethod.POST, value="**/salvarpessoa", consumes = {"multipart/form-data"})   
+	public ModelAndView salvar(@Valid Pessoa pessoa, BindingResult bindingResult, final MultipartFile file) throws IOException {
 		
 		pessoa.setTelefones(telefoneRepository.getTelefones(pessoa.getId()));
 		//System.out.println(pessoa.getId());
@@ -70,8 +93,7 @@ public class PessoaController {
 		
 		if(bindingResult.hasErrors()) {
 			ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-			Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
-			modelAndView.addObject("pessoas", pessoasIterable);
+			modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
 			modelAndView.addObject("pessoaobj", pessoa); // devolve pra tela os dados que foram preenchidos (com msg de erros)
 			
 			// faz um for para encontrar os erros e apresentar na tela:
@@ -87,13 +109,32 @@ public class PessoaController {
 			return modelAndView; // returna para a tela e não executa a debaixo.
 		}
 		
-		// caso não houver erros segue o fluxo:
 		
+		// condição para verificar se há arquivo para upload:
+		// a exceção foi colocada na declaração do método. 
+		if(file.getSize() > 0) { 
+				pessoa.setCurriculo(file.getBytes()); // cadastra um novo currículo
+				pessoa.setTipoFileCurriculo(file.getContentType());
+				pessoa.setNomeFileCurriculo(file.getOriginalFilename());
+		} else {
+			if(pessoa.getId() != null && pessoa.getId() > 0) { // para editar um pessoa que já tem currículo
+				byte[] curriculoTemp = pessoaRepository.findById(pessoa.getId()).get().getCurriculo(); // 
+				String tipoFileCurriculoTemp = pessoaRepository.findById(pessoa.getId()).get().getTipoFileCurriculo();
+				String nomeFileCurriculoTemp = pessoaRepository.findById(pessoa.getId()).get().getNomeFileCurriculo();
+
+				pessoa.setCurriculo(curriculoTemp); // depois que encontra no banco, mantem o mesmo currículo.
+				pessoa.setTipoFileCurriculo(tipoFileCurriculoTemp);
+				pessoa.setNomeFileCurriculo(nomeFileCurriculoTemp);
+				
+			}
+		}
+		
+		
+		// caso não houver erros segue o fluxo:
 		pessoaRepository.save(pessoa);
 		
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
-		modelAndView.addObject("pessoas", pessoasIterable);
+		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
 		modelAndView.addObject("pessoaobj", new Pessoa()); // insere um novo objeto vazio
 		
 		String msg = "Usuário cadastrado com sucesso!"; // mensagem de sucesso 
@@ -111,8 +152,7 @@ public class PessoaController {
 	@RequestMapping(method = RequestMethod.GET, value="/listapessoas")
 	public ModelAndView pessoas() {
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
-		modelAndView.addObject("pessoas", pessoasIterable);
+		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
 		modelAndView.addObject("pessoaobj", new Pessoa()); // insere um novo objeto vazio
 		return modelAndView; 
 	}
@@ -132,6 +172,7 @@ public class PessoaController {
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		modelAndView.addObject("pessoaobj", pessoa.get());
 		modelAndView.addObject("profissoes", profissaoRepository.findAll());
+		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
 		return modelAndView;
 		
 	}
@@ -154,9 +195,8 @@ public class PessoaController {
 	public ModelAndView remover(@PathVariable("idpessoa") Long idpessoa) {
 		
 		pessoaRepository.deleteById(idpessoa);
-		Iterable<Pessoa> pessoasIterable = pessoaRepository.findAll();
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
-		modelAndView.addObject("pessoas", pessoasIterable);
+		modelAndView.addObject("pessoas", pessoaRepository.findAll(PageRequest.of(0, 5, Sort.by("nome"))));
 		modelAndView.addObject("pessoaobj", new Pessoa());
 		
 		return modelAndView;
@@ -180,17 +220,22 @@ public class PessoaController {
 	}
 	
 	@PostMapping("**/pesquisarpessoa")
-	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesquisasexo") String pesquisasexo) {
+	public ModelAndView pesquisar(@RequestParam("nomepesquisa") String nomepesquisa, @RequestParam("pesquisasexo") String pesquisasexo,
+									@PageableDefault(size = 5, sort = {"nome"}) Pageable pageable) {
 		
-		List<Pessoa> pessoas = new ArrayList<Pessoa>();
+							// O spring vai jogar automaticamente o objeteo Pageable como 5 e ordenado pelo nome
 		
-		System.out.println("Entrei no Post: " + nomepesquisa);
-		System.out.println("Entrei no Post: " + pesquisasexo);
+		Page<Pessoa> pessoas = null;
+		
+		//System.out.println(nomepesquisa);
+		//System.out.println(pesquisasexo);
 		
 		if(pesquisasexo!=null && !pesquisasexo.isEmpty()) {
-			pessoas = pessoaRepository.findPessoaByNameAndSex(nomepesquisa, pesquisasexo);
+			System.out.println("Chamo o método pesquisa por nome e sexo com paginação");
+			pessoas = pessoaRepository.findPessoaByNameAndSexPage(nomepesquisa, pesquisasexo, pageable);
 		} else {
-			pessoas = pessoaRepository.findPessoaByName(nomepesquisa);
+			System.out.println("Chamo o método pesquisa por nome com paginação");
+			pessoas = pessoaRepository.findPessoaByNamePage(nomepesquisa, pageable);
 		}
 		
 		
@@ -198,6 +243,7 @@ public class PessoaController {
 		ModelAndView modelAndView = new ModelAndView("cadastro/cadastropessoa");
 		modelAndView.addObject("pessoas", pessoas);
 		modelAndView.addObject("pessoaobj", new Pessoa());
+		modelAndView.addObject("nomepesquisa", nomepesquisa);
 		return modelAndView;
 		
 	}
@@ -210,9 +256,10 @@ public class PessoaController {
 			HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		
-		System.out.println("Entre no Get");
-		System.out.println(nomepesquisa);
-		System.out.println(pesquisasexo);
+		//System.out.println("Get");
+		//System.out.println(nomepesquisa);
+		//System.out.println(pesquisasexo);
+		
 		List<Pessoa> pessoas = new ArrayList<Pessoa>();
 		
 		if(pesquisasexo!=null && !pesquisasexo.isEmpty() && nomepesquisa!=null && !nomepesquisa.isEmpty()) {
@@ -267,6 +314,39 @@ public class PessoaController {
 	}
 	
 	
+	
+	
+	// método de download (obs: é sempre void quando envolve download)
+	@GetMapping("**/baixarcurriculo/{idpessoa}")
+	public void baixarcurriculo(@PathVariable("idpessoa") Long idpessoa, HttpServletResponse response){
+		
+		
+		// Consulta o objeto da pessoa no bd
+		Pessoa pessoa = pessoaRepository.findById(idpessoa).get();
+		if (pessoa.getCurriculo() != null) {
+			
+				
+			// tamanho da resposta e tipo de arquivo para download. OBS: o tipo do arquivo pode ser generico: application/octet-stream
+			response.setContentLength(pessoa.getCurriculo().length);
+			response.setContentType(pessoa.getTipoFileCurriculo()); // genérico response.setContentType("application/octet-stream");
+			
+			// define o cabeçalho da resposta: 
+			String headerKey = "Content-Disposition";
+			String headerValue = String.format("attachment; filename=\"%s\"", pessoa.getNomeFileCurriculo());
+			response.setHeader(headerKey, headerValue);
+			
+			// finalizando a resposta e passando o arquivo:
+			try {
+				response.getOutputStream().write(pessoa.getCurriculo());
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+	}
 	
 	
 	// Método para adicionar Telefone:
